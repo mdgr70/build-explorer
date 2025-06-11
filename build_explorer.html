@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Explorer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #2c3e50; }
+        .session { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .favorite { background-color: #f9f9a1; }
+        .filters { margin-bottom: 20px; }
+        .filters input, .filters select { padding: 5px; margin-right: 10px; }
+        button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Build Explorer</h1>
+    <div class="filters">
+        <input type="text" id="searchInput" placeholder="Cerca per parola chiave...">
+        <select id="dayFilter">
+            <option value="">Tutti i giorni</option>
+        </select>
+        <button onclick="clearFavorites()">Cancella Preferiti</button>
+    </div>
+    <div id="sessionsContainer"></div>
+
+    <script>
+        const sessions = JSON.parse(`[{"code": "Java App Modernization Simplified with AI", "title": "BRK131", "day": "Mercoledì, 21 maggio"}, {"code": "Top GitHub Copilot features you missed in Visual Studio 2022", "title": "BRK120", "day": "Mercoledì, 21 maggio"}, {"code": "Unleashing price-performance: Cobalt 100 and the future of cloud-native on Arm", "title": "BRKFP256", "day": "Mercoledì, 21 maggio"}, {"code": "Elevating Development with .NET Aspire: AI, Cloud, and Beyond", "title": "BRK106", "day": "Mercoledì, 21 maggio"}, {"code": "Enable Agentic AI Apps with a Unified Data Estate in Microsoft Fabric", "title": "BRK213", "day": "Mercoledì, 21 maggio"}, {"code": "Enhancing Agent Management Controls for AI-Ready Enterprises", "title": "BRK132", "day": "Mercoledì, 21 maggio"}, {"code": "Extend your Copilot Agent in Power Apps with Copilot Studio and new SDK's", "title": "BRK130", "day": "Mercoledì, 21 maggio"}, {"code": "Hands on with GitHub in the Enterprise", "title": "BRK109", "day": "Mercoledì, 21 maggio"}, {"code": "Reasoning on multimodal content for efficient agentic AI app building", "title": "BRK169", "day": "Mercoledì, 21 maggio"}, {"code": "Running Stateful Workloads on AKS", "title": "BRK191", "day": "Mercoledì, 21 maggio"}, {"code": "Secure Next-Gen AI Apps with Azure Container Apps Serverless GPUs", "title": "BRK190", "day": "Mercoledì, 21 maggio"}, {"code": "Add more knowledge to Microsoft 365 Copilot with Copilot connectors and actions", "title": "BRK167", "day": "Giovedì, 22 maggio"}, {"code": "Architecting highly resilient applications in Azure: A technical guide for developers", "title": "BRK197", "day": "Giovedì, 22 maggio"}, {"code": "Boost your development productivity with Windows latest tools and tips", "title": "BRK226", "day": "Giovedì, 22 maggio"}, {"code": "Earth's Defense with Hera: AI Agents Battle Planet Extinction Threats", "title": "BRK186", "day": "Giovedì, 22 maggio"}, {"code": "Optimize your GenAI applications at scale in Azure AI Foundry", "title": "BRK178", "day": "Giovedì, 22 maggio"}, {"code": "Skip the YAML! Easily deploy apps to AKS with Automated Deployments", "title": "BRK193", "day": "Giovedì, 22 maggio"}, {"code": "Transform your agentic apps with voice in Foundry", "title": "BRK144", "day": "Giovedì, 22 maggio"}, {"code": "Yet \"Another Highly Technical Talk\" with Hanselman and Toub", "title": "BRK121", "day": "Giovedì, 22 maggio"}, {"code": "Adventures in AI: Deploying and inferencing open source and custom models on K8s", "title": "BRK194", "day": "Giovedì, 22 maggio"}, {"code": "Debug Like a Pro: Improve Your Efficiency with Visual Studio & Copilot", "title": "BRK119", "day": "Giovedì, 22 maggio"}, {"code": "Revolutionizing AI Apps with Multimodal Models in Azure AI Foundry", "title": "BRK170", "day": "Giovedì, 22 maggio"}, {"code": "The future of web development with ASP.NET Core & Blazor", "title": "BRK122", "day": "Giovedì, 22 maggio"}, {"code": "Tips & tricks to enhance Windows Arm64 App performance", "title": "BRK221", "day": "Giovedì, 22 maggio"}, {"code": "Train a custom reasoning model at scale with Azure Machine Learning", "title": "BRK172", "day": "Giovedì, 22 maggio"}, {"code": "Use agents and automations to transform business processes with Copilot Studio", "title": "BRK161", "day": "Giovedì, 22 maggio"}, {"code": "A 10x Faster TypeScript with Anders Hejlsberg", "title": "BRK116Build the next gen of AI apps with .NET: Models, Data, Agents, & More - BRK104", "day": "Giovedì, 22 maggio"}, {"code": "Introducing the Agent Store: Build agents and publish them in the Agent Store for Microsoft 365 Copilot", "title": "BRK156", "day": "Giovedì, 22 maggio"}, {"code": "Reflections on 25 years of writing secure code", "title": "BRK235", "day": "Giovedì, 22 maggio"}, {"code": "Secure and govern your enterprise-scale agents with Copilot Studio", "title": "BRK159", "day": "Giovedì, 22 maggio"}, {"code": "Simplify dev setup with WinGet & Microsoft Desired State Configuration", "title": "BRK228", "day": "Giovedì, 22 maggio"}, {"code": "Unleash developer potential with AI and Dev Box", "title": "BRK127", "day": "Giovedì, 22 maggio"}, {"code": "Unlock developer agility with a well governed environment", "title": "BRK198", "day": "Giovedì, 22 maggio"}, {"code": "A Visual Studio Story: How We Build Software Loved by Millions of Developers", "title": "BRK133", "day": "Giovedì, 22 maggio"}, {"code": "AI infused mobile & desktop app development with .NET MAUI", "title": "BRK123", "day": "Giovedì, 22 maggio"}, {"code": "Build and deploy AI apps faster with low code and DevOps", "title": "BRK125", "day": "Giovedì, 22 maggio"}, {"code": "Building agents in Copilot Studio using Model Context Protocol, open standards and more", "title": "BRK158", "day": "Giovedì, 22 maggio"}, {"code": "Crafting great Windows native app experiences", "title": "BRK227", "day": "Giovedì, 22 maggio"}, {"code": "Learn How Microsoft secured the Engineering System", "title": "BRK232", "day": "Giovedì, 22 maggio"}, {"code": "Scott and Mark Learn to...LIVE", "title": "KEY040", "day": "Giovedì, 22 maggio"}]`);
+        const container = document.getElementById("sessionsContainer");
+        const searchInput = document.getElementById("searchInput");
+        const dayFilter = document.getElementById("dayFilter");
+
+        function loadFavorites() {
+            return JSON.parse(localStorage.getItem("favorites") || "[]");
+        }
+
+        function saveFavorites(favs) {
+            localStorage.setItem("favorites", JSON.stringify(favs));
+        }
+
+        function toggleFavorite(code) {
+            let favs = loadFavorites();
+            if (favs.includes(code)) {
+                favs = favs.filter(c => c !== code);
+            } else {
+                favs.push(code);
+            }
+            saveFavorites(favs);
+            renderSessions();
+        }
+
+        function clearFavorites() {
+            localStorage.removeItem("favorites");
+            renderSessions();
+        }
+
+        function renderSessions() {
+            const keyword = searchInput.value.toLowerCase();
+            const selectedDay = dayFilter.value;
+            const favs = loadFavorites();
+            container.innerHTML = "";
+
+            const filtered = sessions.filter(s => 
+                (!selectedDay || s.day === selectedDay) &&
+                (s.title.toLowerCase().includes(keyword) || s.code.toLowerCase().includes(keyword))
+            );
+
+            filtered.forEach(s => {
+                const div = document.createElement("div");
+                div.className = "session" + (favs.includes(s.code) ? " favorite" : "");
+                div.innerHTML = `<strong>${s.code}</strong> - ${s.title}<br><em>${s.day}</em><br>
+                                 <button onclick="toggleFavorite('${s.code}')">
+                                 ${favs.includes(s.code) ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function populateDayFilter() {
+            const days = [...new Set(sessions.map(s => s.day))];
+            days.forEach(day => {
+                const opt = document.createElement("option");
+                opt.value = day;
+                opt.textContent = day;
+                dayFilter.appendChild(opt);
+            });
+        }
+
+        searchInput.addEventListener("input", renderSessions);
+        dayFilter.addEventListener("change", renderSessions);
+
+        populateDayFilter();
+        renderSessions();
+    </script>
+</body>
+</html>
